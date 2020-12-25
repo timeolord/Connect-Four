@@ -24,7 +24,7 @@ function createBoard(height, width)::gameBoard
     game.board = piece.(game.board)
     for j = 1:game.height
         for i = 1:game.width
-            game.board[j,i] = piece(j,i, "-")
+            game.board[j,i] = piece(i,j, "-")
         end
     end
     return game
@@ -80,8 +80,7 @@ function main()
                 println("Column is full try another")
                 break
             elseif board.board[board.height - i+1,x].type == "-"
-                board.board[board.height - i+1,x] = piece(i,x,player)
-                checkWin(board.board[board.height - i+1,x])
+                board.board[board.height - i+1,x] = piece(x,board.height - i+1,player)
                 switchPlayer()
                 break
             end 
@@ -89,63 +88,54 @@ function main()
     end
 
     function checkWin()
-        winLength = 4
         for i in board.board
-            if board.board[i].type != "-"
-                checkWin(board.board[i], 4)
+            if i.type != "-"
+                #println(i.y, i.x)
+                checkWin(i)
             end
         end
     end
 
-    function checkWin(x::piece, count=4)
-        #=for i in 1:count
-            if x.y + count < board.height && x.x + count < board.width
-                if board.board[x.y + i, x.x + i].type == x.type
-                    win = true
-                end
-            end
-            if x.x + count < board.width
-                if board.board[x.y, x.x + i].type == x.type
-                    win = true
-                end
-            end
-            if x.x - count < board.width && x.x - count > 0
-                if board.board[x.y, x.x - i].type == x.type
-                    win = true
-                end
-            end
-            if x.y + count < board.width
-                if board.board[x.y + i, x.x].type == x.type
-                    win = true
-                end
-            end
-            if x.y - count < board.width && x.y - count > 0
-                if board.board[x.y - i, x.x].type == x.type
-                    win = true
-                end
-            end
-            if x.y - count < board.width && x.y - count > 0 && x.x + count < board.width
-                if board.board[x.y - i, x.x + i].type == x.type
-                    win = true
-                end
-            end
-            if x.y - count < board.width && x.y - count > 0 &&  x.x - count < board.width && x.x - count > 0
-                if board.board[x.y - i, x.x - i].type == x.type
-                    win = true
-                end
-            end
-            if x.y + count < board.width &&  x.x - count < board.width && x.x - count > 0
-                if board.board[x.y + i, x.x - i].type == x.type
-                    win = true
-                end              
-            end
-        end=#
-
+    function checkWin(x::piece)
         #horizontal to right
-        if board.board[x.y, x.x].type == x.type &&
-            board.board[x.y, x.x + 1].type == x.type &&
-            board.board[x.y, x.x + 2].type == x.type &&
-            board.board[x.y, x.x + 3].type == x.type
+        if x.x + 3 < board.height
+            if board.board[x.y, x.x].type == x.type &&
+                board.board[x.y, x.x + 1].type == x.type &&
+                board.board[x.y, x.x + 2].type == x.type &&
+                board.board[x.y, x.x + 3].type == x.type
+                win = true
+            end
+        end
+
+        #vertical
+        if x.y - 3 < board.height
+            if board.board[x.y, x.x].type == x.type &&
+                board.board[x.y - 1, x.x].type == x.type &&
+                board.board[x.y - 2, x.x].type == x.type &&
+                board.board[x.y - 3, x.x].type == x.type
+                win = true
+            end
+        end
+
+        #diagonal right up
+        if x.y + 3 < board.height && x.x + 3 < board.width
+            if board.board[x.y, x.x].type == x.type &&
+                board.board[x.y + 1, x.x + 1].type == x.type &&
+                board.board[x.y + 2, x.x + 2].type == x.type &&
+                board.board[x.y + 3, x.x + 3].type == x.type
+                win = true
+            end
+        end
+
+        #diagonal right down
+        if x.y - 3 < board.height && x.x + 3 < board.width
+            if board.board[x.y, x.x].type == x.type &&
+                board.board[x.y - 1, x.x + 1].type == x.type &&
+                board.board[x.y - 2, x.x + 2].type == x.type &&
+                board.board[x.y - 3, x.x + 3].type == x.type
+                win = true
+            end
+        end
 
     end
 
@@ -155,9 +145,12 @@ function main()
 
     while playing
         printBoard(board)
-        println("It is player: ", player, "'s turn.")
+        println("It is player ", player, "'s turn.")
         inputf()
+        printBoard(board)
+        checkWin()
         if win
+            switchPlayer()
             println("Player ", player, " won!")
             playing = false
         end
