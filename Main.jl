@@ -48,7 +48,7 @@ function main()
 
     player = "X"
 
-    function quit()
+    function inputf()
         println("What is your command? Type quit to quit. Type a number of a column to drop a piece.")
         input = readline()
         if !isempty(input)
@@ -81,21 +81,80 @@ function main()
                 break
             elseif board.board[board.height - i+1,x].type == "-"
                 board.board[board.height - i+1,x] = piece(i,x,player)
+                checkWin(board.board[board.height - i+1,x])
                 switchPlayer()
                 break
             end 
         end
     end
 
-    function 
-    
+    function checkWin()
+        winLength = 4
+        for i in board.board
+            if board.board[i].type != "-"
+                checkWin(board.board[i], 4)
+            end
+        end
+    end
+
+    function checkWin(x::piece, count=4)
+        #=for i in 1:count
+            if x.y + count < board.height && x.x + count < board.width
+                if board.board[x.y + i, x.x + i].type == x.type
+                    win = true
+                end
+            end
+            if x.x + count < board.width
+                if board.board[x.y, x.x + i].type == x.type
+                    win = true
+                end
+            end
+            if x.x - count < board.width && x.x - count > 0
+                if board.board[x.y, x.x - i].type == x.type
+                    win = true
+                end
+            end
+            if x.y + count < board.width
+                if board.board[x.y + i, x.x].type == x.type
+                    win = true
+                end
+            end
+            if x.y - count < board.width && x.y - count > 0
+                if board.board[x.y - i, x.x].type == x.type
+                    win = true
+                end
+            end
+            if x.y - count < board.width && x.y - count > 0 && x.x + count < board.width
+                if board.board[x.y - i, x.x + i].type == x.type
+                    win = true
+                end
+            end
+            if x.y - count < board.width && x.y - count > 0 &&  x.x - count < board.width && x.x - count > 0
+                if board.board[x.y - i, x.x - i].type == x.type
+                    win = true
+                end
+            end
+            if x.y + count < board.width &&  x.x - count < board.width && x.x - count > 0
+                if board.board[x.y + i, x.x - i].type == x.type
+                    win = true
+                end              
+            end
+        end=#
+        
+    end
+
+    win = false
     playing = true
     board = createBoard(height, width)
 
     while playing
         printBoard(board)
         println("It is player: ", player, "'s turn.")
-        quit()
+        inputf()
+        if win
+            println("Player ", player, " won!")
+            playing = false
+        end
     end
 end
 
