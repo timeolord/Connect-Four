@@ -140,7 +140,13 @@ function main()
                 end              
             end
         end=#
-        
+
+        #horizontal to right
+        if board.board[x.y, x.x].type == x.type &&
+            board.board[x.y, x.x + 1].type == x.type &&
+            board.board[x.y, x.x + 2].type == x.type &&
+            board.board[x.y, x.x + 3].type == x.type
+
     end
 
     win = false
