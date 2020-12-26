@@ -1,13 +1,15 @@
 import Base: convert, print
+using Flux
+using ReinforcementLearningBase
 
-struct piece
+struct Piece
     x::Int64
     y::Int64
     type::String
 end
 
-mutable struct gameBoard
-    board::Array
+mutable struct GameBoard
+    board::Union{Array{Piece}, Array{Int8}}
     width::Int
     height::Int
 end
@@ -15,22 +17,22 @@ end
 width = 7
 height = 6
 
-convert(::Type{piece}, x::Int8) = piece(0,0,"-")
-piece(x::Int8) = piece(0,0,"-")
-piece(x::piece) = piece(x.x, x.y, x.type)
+convert(::Type{Piece}, x::Int8) = Piece(0,0,"-")
+Piece(x::Int8) = Piece(0,0,"-")
+Piece(x::Piece) = Piece(x.x, x.y, x.type)
 
-function createBoard(height, width)::gameBoard
-    game = gameBoard(zeros(Int8, height, width), width, height)
-    game.board = piece.(game.board)
+function createBoard(height, width)::GameBoard
+    game = GameBoard(zeros(Int8, height, width), width, height)
+    game.board = Piece.(game.board)
     for j = 1:game.height
         for i = 1:game.width
-            game.board[j,i] = piece(i,j, "-")
+            game.board[j,i] = Piece(i,j, "-")
         end
     end
     return game
 end
 
-function printBoard(board::gameBoard)
+function printBoard(board::GameBoard)
     for k = 1:width
         print(k, "  ")
     end
@@ -49,7 +51,7 @@ function main()
     player = "X"
 
     function inputf()
-        println("What is your command? Type quit to quit. Type a number of a column to drop a piece.")
+        println("What is your command? Type quit to quit. Type a number of a column to drop a Piece.")
         input = readline()
         if !isempty(input)
             if input == "quit"
@@ -80,7 +82,7 @@ function main()
                 println("Column is full try another")
                 break
             elseif board.board[board.height - i+1,x].type == "-"
-                board.board[board.height - i+1,x] = piece(x,board.height - i+1,player)
+                board.board[board.height - i+1,x] = Piece(x,board.height - i+1,player)
                 switchPlayer()
                 break
             end 
@@ -96,7 +98,7 @@ function main()
         end
     end
 
-    function checkWin(x::piece)
+    function checkWin(x::Piece)
         #horizontal to right
         if x.x + 3 < board.height
             if board.board[x.y, x.x].type == x.type &&
@@ -139,9 +141,29 @@ function main()
 
     end
 
+    function checkTie()
+        ties = Int64[]
+        for x = 1:board.width
+            if board.board[1, x].type != "-"
+                push!(ties, 1)
+            end
+        end
+        if length(ties) == width
+            tie = true
+        end
+    end
+
+    ReinforcementLearningBase.get_actions(env::ConnectEnv) = (:1,:2,:3,:4,:5,:6,:7)
+    ReinforcementLearningBase.get_state(env::ConnectEnv) = !isnothing(env.reward)
+    ReinforcementLearningBase.get_terminal(env::ConnectEnv) = !isnothing(env.reward)
+    ReinforcementLearningBase.reset!(env::ConnectEnv) = env.reward = nothing
+
     win = false
     playing = true
+    tie = false
     board = createBoard(height, width)
+
+    
 
     while playing
         printBoard(board)
@@ -154,8 +176,23 @@ function main()
             println("Player ", player, " won!")
             playing = false
         end
+        checkTie()
+        if tie
+            println("Tie Game, no one wins.")
+            playing = false
+        end
     end
 end
+
+
+mutable struct ConnectEnv <: AbstractEnv
+    reward::Union{Nothing, Int}
+end
+
+ConnectEnv() = ConnectEnv(nothing)
+
+
+
 
 
 main()
