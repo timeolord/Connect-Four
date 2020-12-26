@@ -110,7 +110,7 @@ function main()
         end
 
         #vertical
-        if x.y - 3 < board.height
+        if x.y - 3 < board.height && x.y - 3 > 0 
             if board.board[x.y, x.x].type == x.type &&
                 board.board[x.y - 1, x.x].type == x.type &&
                 board.board[x.y - 2, x.x].type == x.type &&
@@ -130,7 +130,7 @@ function main()
         end
 
         #diagonal right down
-        if x.y - 3 < board.height && x.x + 3 < board.width
+        if x.y - 3 < board.height && x.y - 3 > && x.x + 3 < board.width
             if board.board[x.y, x.x].type == x.type &&
                 board.board[x.y - 1, x.x + 1].type == x.type &&
                 board.board[x.y - 2, x.x + 2].type == x.type &&
