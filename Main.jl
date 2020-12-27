@@ -1,6 +1,6 @@
 import Base: convert, print
-using Flux
-using ReinforcementLearningBase
+#using Flux
+#using ReinforcementLearningBase
 
 struct Piece
     x::Int64
@@ -130,7 +130,7 @@ function main()
         end
 
         #diagonal right down
-        if x.y - 3 < board.height && x.y - 3 > && x.x + 3 < board.width
+        if x.y - 3 < board.height && x.y - 3 > 0 && x.x + 3 < board.width
             if board.board[x.y, x.x].type == x.type &&
                 board.board[x.y - 1, x.x + 1].type == x.type &&
                 board.board[x.y - 2, x.x + 2].type == x.type &&
@@ -153,10 +153,10 @@ function main()
         end
     end
 
-    ReinforcementLearningBase.get_actions(env::ConnectEnv) = (:1,:2,:3,:4,:5,:6,:7)
-    ReinforcementLearningBase.get_state(env::ConnectEnv) = !isnothing(env.reward)
-    ReinforcementLearningBase.get_terminal(env::ConnectEnv) = !isnothing(env.reward)
-    ReinforcementLearningBase.reset!(env::ConnectEnv) = env.reward = nothing
+    #ReinforcementLearningBase.get_actions(env::ConnectEnv) = (:1,:2,:3,:4,:5,:6,:7)
+    #ReinforcementLearningBase.get_state(env::ConnectEnv) = !isnothing(env.reward)
+    #ReinforcementLearningBase.get_terminal(env::ConnectEnv) = !isnothing(env.reward)
+    #ReinforcementLearningBase.reset!(env::ConnectEnv) = env.reward = nothing
 
     win = false
     playing = true
@@ -185,11 +185,11 @@ function main()
 end
 
 
-mutable struct ConnectEnv <: AbstractEnv
-    reward::Union{Nothing, Int}
-end
+#mutable struct ConnectEnv <: AbstractEnv
+#    reward::Union{Nothing, Int}
+#end
 
-ConnectEnv() = ConnectEnv(nothing)
+#ConnectEnv() = ConnectEnv(nothing)
 
 
 

@@ -1,0 +1,12 @@
+{
+    "julia.lint.missingrefs": "all",
+    "juliaFormatter.alwaysForIn": true,
+    "juliaFormatter.compile": "all",
+    "juliaFormatter.importToUsing": true,
+    "juliaFormatter.pipeToFunctionCall": true,
+    "juliaFormatter.removeExtraNewlines": true,
+    "juliaFormatter.whitespaceOpsInIndices": true,
+    "juliaFormatter.whitespaceTypedefs": true,
+    "julia.NumThreads": 4,
+    "julia.execution.resultType": "both"
+}
